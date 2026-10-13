@@ -30,7 +30,7 @@
     slope: 133,
     allowance: 100,
     mode: "low", // "low" = strokes off the low man, "full" = full course handicaps
-    birdies: "gross", // "gross" = natural birdies only, "net" = net birdies count
+    birdies: "net", // "net" = net birdies count, "gross" = natural birdies only
     ties: "push", // "push" = nobody gets the point, "split" = ½ each
     override: { g: null, taytay: null, luke: null, bob: null },
   };
@@ -453,7 +453,7 @@
       return `<div class="hr-line"><span>${label}</span><span>${who} · ${x.a} v ${x.b}</span></div>`;
     };
     const bonus = r.bonus.length
-      ? r.bonus.map((b) => `<span class="tag-${b.team}">${byId[b.id].name} ${b.kind} +${b.pts}</span>`).join(", ")
+      ? r.bonus.map((b) => `<span class="tag-${b.team}">${byId[b.id].name} ${state.settings.birdies === "net" ? "net " : ""}${b.kind} +${b.pts}</span>`).join(", ")
       : "None";
 
     $("#hole-result").innerHTML = r.complete
@@ -520,7 +520,7 @@
         : `<b>Net scoring off full course handicaps</b>, allocated by stroke index.`,
       s.birdies === "gross"
         ? `<b>Birdies and eagles are natural</b> (gross) scores. A net birdie doesn't earn the bonus.`
-        : `<b>Birdies and eagles are net</b> scores, so handicap strokes count toward the bonus.`,
+        : `<b>Everything is net, birdies and eagles included.</b> A par on a hole where you get a stroke is a net birdie.`,
       s.ties === "push"
         ? `<b>Ties push.</b> If low man or team total is tied, nobody gets that point.`
         : `<b>Ties split.</b> A tied low man or team total gives each team ½ point.`,

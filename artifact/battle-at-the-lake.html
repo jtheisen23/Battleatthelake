@@ -521,12 +521,12 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
 
   <section class="section" id="rules">
     <h2>How points work</h2>
-    <p class="lede">Two-man best ball, scored hole by hole. Each hole puts two points on the line, plus bonus points for birdies and eagles.</p>
+    <p class="lede">Two-man best ball on net scores, hole by hole. Each hole puts two points on the line, plus bonus points for net birdies and eagles.</p>
     <div class="rules">
       <div class="rule"><p class="rule-pts">1 pt</p><h3>Low man</h3><p>Each team's best net score on the hole. The lower one wins the point.</p></div>
       <div class="rule"><p class="rule-pts">1 pt</p><h3>Team total</h3><p>Both partners' net scores added together. The lower total wins the point.</p></div>
-      <div class="rule"><p class="rule-pts">1 pt</p><h3>Birdie</h3><p>Every birdie by any player earns a point for that player's team.</p></div>
-      <div class="rule"><p class="rule-pts">2 pts</p><h3>Eagle</h3><p>Every eagle or better earns two points for that player's team.</p></div>
+      <div class="rule"><p class="rule-pts">1 pt</p><h3>Birdie</h3><p>Every net birdie by any player earns a point for that player's team.</p></div>
+      <div class="rule"><p class="rule-pts">2 pts</p><h3>Eagle</h3><p>Every net eagle or better earns two points for that player's team.</p></div>
     </div>
     <ul class="rule-notes" id="rule-notes"></ul>
   </section>
@@ -554,8 +554,8 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
             </label>
             <label for="set-birdies">Birdies &amp; eagles count
               <select id="set-birdies" name="birdies">
-                <option value="gross">Natural (gross) only</option>
                 <option value="net">Net</option>
+                <option value="gross">Natural (gross) only</option>
               </select>
             </label>
             <label for="set-ties">Tied hole
@@ -611,7 +611,7 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
   const YARDS_TOTAL = COURSE.yards.reduce((a, b) => a + b, 0);
   const DEFAULTS = {
     rating: 71.3, slope: 133, allowance: 100,
-    mode: "low", birdies: "gross", ties: "push",
+    mode: "low", birdies: "net", ties: "push",
     override: { g: null, taytay: null, luke: null, bob: null },
   };
   const DOC_PATH = "match/live";
@@ -1042,7 +1042,7 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
     const tieText = state.settings.ties === "split" ? "Split ½ – ½" : "Push";
     const line = (label, x) => `<div class="hr-line"><span>${label}</span><span>${x.winner === "tie" ? tieText : teamTag(x.winner)} · ${x.a} v ${x.b}</span></div>`;
     const bonus = r.bonus.length
-      ? r.bonus.map((b) => `<span class="tag-${b.team}">${byId[b.id].name} ${b.kind} +${b.pts}</span>`).join(", ")
+      ? r.bonus.map((b) => `<span class="tag-${b.team}">${byId[b.id].name} ${state.settings.birdies === "net" ? "net " : ""}${b.kind} +${b.pts}</span>`).join(", ")
       : "None";
     const bonusLine = `<div class="hr-line"><span>Birdies &amp; eagles</span><span>${bonus}</span></div>`;
     $("#hole-result").innerHTML = r.complete
@@ -1098,7 +1098,7 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
         : "<b>Net scoring off full course handicaps</b>, given out by stroke index.",
       s.birdies === "gross"
         ? "<b>Birdies and eagles are natural</b> (gross) scores. A net birdie doesn't earn the bonus."
-        : "<b>Birdies and eagles are net</b> scores, so handicap strokes count toward the bonus.",
+        : "<b>Everything is net, birdies and eagles included.</b> A par on a hole where you get a stroke is a net birdie.",
       s.ties === "push"
         ? "<b>Ties push.</b> If low man or team total is tied, nobody gets that point."
         : "<b>Ties split.</b> A tied low man or team total gives each team ½ point.",
