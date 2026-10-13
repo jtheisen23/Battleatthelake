@@ -53,9 +53,11 @@ Course handicaps are worked out from each index using the Gold tee rating and sl
 
 If the club gives you different course handicaps, enter them under **Match settings → Course handicap override**. Write a plus handicap as `+1`.
 
-## Sharing live scores
+## Live scoring
 
-Scores save in the scorer's browser. **Share scores** sends a link that carries every score entered so far, so anyone who opens it sees the current standings. Share again after more holes to update everyone.
+The live version of the page is published on claude.ai, where scores sync across every phone that has it open. Its source is `artifact/battle-at-the-lake.html`, and it uses the same photos from `images/`.
+
+The GitHub Pages copy (`index.html`) saves scores in the scorer's browser instead. Its **Share scores** button sends a link that carries every score entered so far.
 
 ## Editing the match
 
