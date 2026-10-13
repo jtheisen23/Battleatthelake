@@ -845,11 +845,18 @@ img { max-width: 100%; }
       await fb.dbm.set(fb.dbm.ref(fb.db, "scorers/" + fb.auth.currentUser.uid), pin);
     } catch (err) {
       store.del(PIN_KEY);
+      const code = String(err?.code || "");
+      const authHelp = {
+        "auth/operation-not-allowed": "Scoring isn't switched on yet. In Firebase, open Authentication → Sign-in method and enable Anonymous.",
+        "auth/admin-restricted-operation": "Scoring isn't switched on yet. In Firebase, open Authentication → Sign-in method and enable Anonymous.",
+        "auth/configuration-not-found": "Firebase sign-in isn't set up yet. In Firebase, open Authentication, tap Get started, then enable Anonymous.",
+        "auth/unauthorized-domain": `In Firebase, add ${location.hostname} under Authentication → Settings → Authorized domains.`,
+        "auth/network-request-failed": "Couldn't reach Firebase. Check your connection and try again.",
+      };
       const msg = isDenied(err)
         ? "That PIN didn't work. Check it and try again."
-        : String(err?.code || "").startsWith("auth/")
-          ? "Scoring isn't switched on yet. In Firebase, turn on Anonymous sign-in."
-          : "Couldn't check the PIN. Check your connection and try again.";
+        : authHelp[code] ||
+          (code.startsWith("auth/") ? `Couldn't start scoring (${code}).` : "Couldn't check the PIN. Check your connection and try again.");
       if (source === "form") showScorerError(msg);
       else toast(msg);
       return;
