@@ -615,7 +615,6 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
     override: { g: null, taytay: null, luke: null, bob: null },
   };
   const DOC_PATH = "match/live";
-  const LOCAL_KEY = "batl-local-v1";
   const HOLE_KEY = "batl-hole";
   const MAX_SCORE = 15;
 
@@ -668,7 +667,7 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
   }
 
   // ---------- Sync ----------
-  let mode = "connecting"; // connecting | live | local | readonly
+  let mode = "connecting"; // connecting | live | readonly | signedout
   let ref = null;
   let remote = null; // last snapshot body, or null
   let remoteExists = false;
@@ -680,30 +679,17 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
   let hole = 0;
   let lastSettingsSig = "";
 
-  function readLocal() {
-    try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || "null"); } catch { return null; }
-  }
-  function writeLocal(doc) {
-    try { localStorage.setItem(LOCAL_KEY, JSON.stringify(doc)); } catch { /* storage blocked */ }
-  }
-
   function recompute() {
     state = docToState(merge(remote || blankDoc(), pending || {}));
   }
 
-  function canEdit() { return mode === "live" || mode === "local"; }
+  function canEdit() { return mode === "live"; }
 
   function edit(patch) {
     if (!canEdit()) return;
     pending = merge(pending || {}, patch);
     recompute();
     refresh();
-    if (mode === "local") {
-      remote = merge(remote || blankDoc(), pending);
-      pending = null;
-      writeLocal(remote);
-      return;
-    }
     clearTimeout(flushTimer);
     flushTimer = setTimeout(flush, 350);
     setStatus();
@@ -765,7 +751,7 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
     const text = $("#status-text");
     let st = "live", msg = "Live";
     if (mode === "connecting") { st = "connecting"; msg = "Connecting to live scores…"; }
-    else if (mode === "local") { st = "connecting"; msg = "Saved on this device only"; }
+    else if (mode === "signedout") { st = "connecting"; msg = "Sign in to see live scores"; }
     else if (mode === "readonly") { st = "live"; msg = "Live · view only"; }
     else if (saveError) { st = "error"; msg = "Not saved"; }
     else if (inflight || pending) { st = "saving"; msg = "Saving…"; }
@@ -785,7 +771,7 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
 
   async function connect() {
     const db = window.claude?.use ? await window.claude.use("db").catch(() => null) : null;
-    if (!db) return goLocal();
+    if (!db) return goSignedOut();
     ref = db.doc(DOC_PATH);
     let first = true;
     ref.onSnapshot((snap) => {
@@ -809,11 +795,13 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
     if (writable === false) goReadOnly(false);
   }
 
-  function goLocal() {
-    mode = "local";
-    remote = merge(blankDoc(), readLocal() || {});
-    remoteExists = true;
-    $("#sync-note").textContent = "Live sync isn't available in this view, so scores save on this device only. Open the page signed in to Claude to see everyone's scores.";
+  // Signed-out visitors can't reach the shared scores, so say how to see them instead of showing an empty card.
+  function goSignedOut() {
+    mode = "signedout";
+    document.body.classList.add("readonly");
+    $("#settings-fields").disabled = true;
+    $("#danger-zone").hidden = true;
+    $("#sync-note").textContent = "Live scores only show for people signed in to Claude. Sign in (a free account works), then open this link again.";
     hole = initialHole();
     recompute();
     renderHoleCard();
@@ -1202,9 +1190,7 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
     $("#clear-confirm").hidden = true;
     $("#clear-ask").hidden = false;
     const fresh = { scores: blankDoc().scores, settings: state.settings };
-    if (mode === "local") {
-      remote = fresh; writeLocal(remote);
-    } else if (mode === "live") {
+    if (mode === "live") {
       clearTimeout(flushTimer);
       pending = null;
       try { await ref.set(fresh); }
