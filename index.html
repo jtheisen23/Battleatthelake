@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Battle at the Lake</title>
+  <meta name="description" content="2 v 2 best ball at Geneva National, Player Course, Gold tees. G & Tay Tay vs Luke & Bob.">
+  <meta name="theme-color" content="#10291d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2310291d'/%3E%3Cpath d='M26 14v36' stroke='%23f4efe3' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M28 15l18 7-18 7z' fill='%23d9ad4e'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Geneva National · Lake Geneva, WI</p>
+      <h1>Battle at the Lake</h1>
+      <p class="hero-sub"><span>One day · 18 holes · 2 v 2 best ball</span> <span>Player Course · Gold tees</span></p>
+
+      <section class="board" aria-label="Live score">
+        <div class="board-team team-a">
+          <div class="board-faces" data-faces="a"></div>
+          <p class="board-name" data-team-name="a"></p>
+          <p class="board-points" data-points="a">0</p>
+        </div>
+        <div class="board-mid">
+          <p class="board-status" id="board-status">All square</p>
+          <p class="board-thru" id="board-thru">Not started</p>
+        </div>
+        <div class="board-team team-b">
+          <div class="board-faces" data-faces="b"></div>
+          <p class="board-name" data-team-name="b"></p>
+          <p class="board-points" data-points="b">0</p>
+        </div>
+      </section>
+      <div class="board-breakdown" id="board-breakdown" aria-label="Points by category"></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" id="teams">
+      <h2>The teams</h2>
+      <div class="teams" id="team-cards"></div>
+      <p class="fine" id="hcp-note"></p>
+    </section>
+
+    <section class="section" id="score">
+      <div class="section-head">
+        <h2>Scorecard</h2>
+        <button class="btn btn-primary" id="share-btn" type="button">Share scores</button>
+      </div>
+      <nav class="pills" id="hole-pills" aria-label="Choose a hole"></nav>
+
+      <article class="hole" id="hole-card" aria-live="polite">
+        <header class="hole-head">
+          <button class="btn-icon" id="prev-hole" type="button" aria-label="Previous hole">&#8249;</button>
+          <div class="hole-title">
+            <p class="hole-num" id="hole-num"></p>
+            <p class="hole-meta" id="hole-meta"></p>
+          </div>
+          <button class="btn-icon" id="next-hole" type="button" aria-label="Next hole">&#8250;</button>
+        </header>
+        <div class="hole-rows" id="hole-rows"></div>
+        <div class="hole-result" id="hole-result"></div>
+      </article>
+
+      <p class="fine">Scores save on this device. Tap <strong>Share scores</strong> to send the group a link with every score entered so far.</p>
+
+      <div class="card-tables" id="card-tables"></div>
+    </section>
+
+    <section class="section" id="rules">
+      <h2>How points work</h2>
+      <p class="lede">Two-man best ball, scored hole by hole. Every hole has up to two points on the line, plus bonus points for birdies and eagles.</p>
+      <div class="rules">
+        <div class="rule">
+          <p class="rule-pts">1 pt</p>
+          <h3>Low man</h3>
+          <p>Each team's best net score on the hole. Lower one wins the point.</p>
+        </div>
+        <div class="rule">
+          <p class="rule-pts">1 pt</p>
+          <h3>Team total</h3>
+          <p>Both partners' net scores added together. Lower total wins the point.</p>
+        </div>
+        <div class="rule">
+          <p class="rule-pts">1 pt</p>
+          <h3>Birdie</h3>
+          <p>Every birdie by any player earns a point for that player's team.</p>
+        </div>
+        <div class="rule">
+          <p class="rule-pts">2 pts</p>
+          <h3>Eagle</h3>
+          <p>Every eagle (or better) earns two points for that player's team.</p>
+        </div>
+      </div>
+      <ul class="rule-notes" id="rule-notes"></ul>
+    </section>
+
+    <section class="section" id="course">
+      <h2>The course</h2>
+      <div class="course-facts" id="course-facts"></div>
+      <p class="fine">Gold tee yardages, stroke index, rating and slope come from the published Player Course card. Check them against the card in the cart and fix any differences under Match settings.</p>
+    </section>
+
+    <section class="section" id="settings">
+      <details class="settings">
+        <summary>Match settings</summary>
+        <form id="settings-form" class="settings-grid" autocomplete="off">
+          <label>Course rating
+            <input type="number" step="0.1" name="rating" inputmode="decimal">
+          </label>
+          <label>Slope
+            <input type="number" step="1" name="slope" inputmode="numeric">
+          </label>
+          <label>Handicap allowance (%)
+            <input type="number" step="5" min="0" max="100" name="allowance" inputmode="numeric">
+          </label>
+          <label>Strokes
+            <select name="mode">
+              <option value="low">Off the low man</option>
+              <option value="full">Full course handicaps</option>
+            </select>
+          </label>
+          <label>Birdies &amp; eagles count
+            <select name="birdies">
+              <option value="gross">Natural (gross) only</option>
+              <option value="net">Net</option>
+            </select>
+          </label>
+          <label>Tied hole
+            <select name="ties">
+              <option value="push">No point awarded</option>
+              <option value="split">Split ½ – ½</option>
+            </select>
+          </label>
+          <fieldset class="overrides">
+            <legend>Course handicap override <span>(leave blank to calculate from index)</span></legend>
+            <div class="override-grid" id="override-grid"></div>
+          </fieldset>
+        </form>
+        <div class="settings-actions">
+          <button class="btn btn-danger" id="reset-btn" type="button">Clear all scores</button>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Battle at the Lake · Geneva National Player Course</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
