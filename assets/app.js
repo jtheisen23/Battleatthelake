@@ -30,7 +30,7 @@
     slope: 133,
     allowance: 100,
     mode: "low", // "low" = strokes off the low man, "full" = full course handicaps
-    birdies: "net", // "net" = net birdies count, "gross" = natural birdies only
+    birdies: "gross", // "gross" = real birdies only (no strokes), "net" = net birdies count
     ties: "push", // "push" = nobody gets the point, "split" = ½ each
     override: { g: null, taytay: null, luke: null, bob: null },
   };
@@ -519,7 +519,7 @@
         ? `<b>Net scoring off the low man.</b> The lowest handicap plays at scratch; everyone else gets the difference, allocated by stroke index.`
         : `<b>Net scoring off full course handicaps</b>, allocated by stroke index.`,
       s.birdies === "gross"
-        ? `<b>Birdies and eagles are natural</b> (gross) scores. A net birdie doesn't earn the bonus.`
+        ? `<b>Birdies and eagles are gross.</b> Low man and team total use net scores, but the bonus only counts a real birdie or eagle, with no strokes.`
         : `<b>Everything is net, birdies and eagles included.</b> A par on a hole where you get a stroke is a net birdie.`,
       s.ties === "push"
         ? `<b>Ties push.</b> If low man or team total is tied, nobody gets that point.`

@@ -29,16 +29,16 @@ After a minute or so the page is live at `https://jtheisen23.github.io/Battleatt
 
 ## Scoring
 
-Two-man best ball with strokes off the low man. Every point is based on net scores. Points on each hole:
+Two-man best ball with strokes off the low man. Low net wins each hole's points; birdies and eagles count on gross scores. Points on each hole:
 
 - **Low man, 1 pt.** Each team's best net score; the lower one wins.
 - **Team total, 1 pt.** Both partners' net scores added together; the lower total wins.
-- **Birdie, 1 pt** for each net birdie by any player.
-- **Eagle, 2 pts** for each net eagle or better.
+- **Birdie, 1 pt** for each gross birdie by any player (no strokes).
+- **Eagle, 2 pts** for each gross eagle or better (no strokes).
 
 These defaults can be changed under **Match settings** on the page:
 
-- Birdies and eagles are net; you can switch them to natural (gross) only.
+- Birdies and eagles are gross; you can switch them to net.
 - A tied low man or team total awards no point; you can switch to splitting it ½–½.
 - Handicap allowance is 100%.
 
