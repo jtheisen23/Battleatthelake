@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "match": {
+      ".read": true,
+      ".write": "auth != null && root.child('scorers').child(auth.uid).val() === 'CHANGE-ME'"
+    },
+    "scorers": {
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid && (!newData.exists() || newData.val() === 'CHANGE-ME')"
+      }
+    }
+  }
+}

@@ -1,159 +1,1388 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Battle at the Lake</title>
-  <meta name="description" content="2 v 2 best ball at Geneva National, Player Course, Gold tees. G & Tay Tay vs Luke & Bob.">
-  <meta name="theme-color" content="#10291d">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2310291d'/%3E%3Cpath d='M26 14v36' stroke='%23f4efe3' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M28 15l18 7-18 7z' fill='%23d9ad4e'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Battle at the Lake</title>
+<meta name="description" content="Live scoring for the 2 v 2 best ball at Geneva National, Player Course, Gold tees. G &amp; Tay Tay vs Luke &amp; Bob.">
+<meta name="theme-color" content="#0f2a1d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230f2a1d'/%3E%3Cpath d='M26 14v36' stroke='%23f4f6f0' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M28 15l18 7-18 7z' fill='%23e2b85a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap">
+<style>
+/* Layout: a tournament leaderboard up top (green board, white number plates), then a scorecard you fill hole by hole. */
+:root {
+  --paper: #f4f6f0;
+  --card: #ffffff;
+  --card-2: #eaede4;
+  --ink: #17241d;
+  --ink-2: #55635a;
+  --rule: #d6dbcf;
+  --fairway: #1f5a3c;
+  --board: #0f2a1d;
+  --board-2: #183d2a;
+  --board-ink: #f2f4ee;
+  --board-ink-2: #b2c2b7;
+  --plate: #f7f6ef;
+  --team-a: #9a6f12;
+  --team-a-hi: #e2b85a;
+  --team-b: #285f88;
+  --team-b-hi: #86bde6;
+  --live: #2f9e61;
+  --warn: #b0631d;
+  --danger: #a3372a;
+  --shadow: 0 1px 2px rgb(15 42 29 / 7%), 0 8px 22px rgb(15 42 29 / 7%);
+  --radius: 14px;
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --num: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0c1510;
+    --card: #142019;
+    --card-2: #1b2a21;
+    --ink: #e9ece3;
+    --ink-2: #a3aea4;
+    --rule: #2a392f;
+    --fairway: #47a072;
+    --board: #08170f;
+    --board-2: #123020;
+    --plate: #eef0e7;
+    --team-a: #dcae4c;
+    --team-b: #6fabd9;
+    --live: #4cc283;
+    --warn: #e09a55;
+    --danger: #e58272;
+    --shadow: 0 1px 2px rgb(0 0 0 / 35%), 0 8px 22px rgb(0 0 0 / 25%);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0c1510;
+  --card: #142019;
+  --card-2: #1b2a21;
+  --ink: #e9ece3;
+  --ink-2: #a3aea4;
+  --rule: #2a392f;
+  --fairway: #47a072;
+  --board: #08170f;
+  --board-2: #123020;
+  --plate: #eef0e7;
+  --team-a: #dcae4c;
+  --team-b: #6fabd9;
+  --live: #4cc283;
+  --warn: #e09a55;
+  --danger: #e58272;
+  --shadow: 0 1px 2px rgb(0 0 0 / 35%), 0 8px 22px rgb(0 0 0 / 25%);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-size: clamp(1.6rem, 4.5vw, 2.1rem); }
+h3 { font-size: 1.15rem; }
+p { margin: 0; }
+button, input, select { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--team-b);
+  outline-offset: 2px;
+}
+
+/* ---------- Leaderboard ---------- */
+.hero {
+  background: radial-gradient(120% 90% at 50% 0%, var(--board-2) 0%, var(--board) 70%);
+  color: var(--board-ink);
+  padding-inline: 16px;
+  padding-block: 36px 24px;
+}
+.hero-inner { max-width: 880px; margin: 0 auto; display: grid; gap: 22px; }
+.masthead { text-align: center; display: grid; gap: 8px; }
+.eyebrow {
+  font-family: var(--num);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--board-ink-2);
+}
+.hero h1 { font-size: clamp(2.4rem, 10vw, 4.4rem); letter-spacing: -0.02em; }
+.hero-sub { color: var(--board-ink-2); }
+.hero-sub span { display: inline-block; }
+
+.board {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 12px;
+  border-radius: 18px;
+  background: rgb(255 255 255 / 5%);
+  border: 1px solid rgb(255 255 255 / 10%);
+}
+.board-team { display: grid; justify-items: center; gap: 8px; min-width: 0; }
+.faces { display: flex; }
+.faces .avatar { width: 50px; height: 50px; border: 3px solid var(--board); font-size: 1rem; }
+.faces .avatar + .avatar { margin-left: -12px; }
+.board-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.plate {
+  min-width: 84px;
+  padding: 2px 14px 0;
+  border-radius: 6px;
+  background: var(--plate);
+  box-shadow: inset 0 -3px 0 rgb(0 0 0 / 12%), 0 2px 0 rgb(0 0 0 / 30%);
+  font-family: var(--num);
+  font-weight: 700;
+  font-size: clamp(2.8rem, 12vw, 3.8rem);
+  line-height: 1.1;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.team-a .plate { color: #8a620c; }
+.team-b .plate { color: #22567d; }
+.board-mid { display: grid; justify-items: center; gap: 4px; text-align: center; }
+.board-status { font-weight: 700; font-size: 0.95rem; }
+.board-thru {
+  font-family: var(--num);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--board-ink-2);
+}
+.breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.bd {
+  display: grid;
+  align-content: space-between;
+  gap: 2px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 4%);
+  font-size: 0.85rem;
+  color: var(--board-ink-2);
+  text-align: center;
+}
+.bd strong { font-family: var(--num); font-size: 1.25rem; font-weight: 600; color: var(--board-ink); }
+.bd .a { color: var(--team-a-hi); }
+.bd .b { color: var(--team-b-hi); }
+
+/* ---------- Page ---------- */
+main { max-width: 880px; margin: 0 auto; padding-inline: 16px; }
+.section { padding-block: 40px 4px; display: grid; gap: 16px; }
+.section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+.lede { color: var(--ink-2); max-width: 62ch; }
+.fine { color: var(--ink-2); font-size: 0.88rem; max-width: 70ch; }
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink-2);
+}
+.status[data-state="live"]::before { background: var(--live); box-shadow: 0 0 0 3px rgb(47 158 97 / 20%); }
+.status[data-state="saving"]::before { background: var(--warn); }
+.status[data-state="error"]::before { background: var(--danger); }
+.status button {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-weight: 700;
+  color: var(--team-b);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- Avatars ---------- */
+.avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  max-width: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: none;
+  font-weight: 700;
+  color: #fff;
+  background: var(--team-a);
+}
+.avatar.b { background: var(--team-b); }
+.avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- Teams ---------- */
+.teams { display: grid; gap: 14px; }
+@media (min-width: 720px) { .teams { grid-template-columns: 1fr auto 1fr; } }
+.team { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; display: grid; gap: 12px; align-content: start; }
+.team-label {
+  font-family: var(--num);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--team-a);
+}
+.team.b .team-label { color: var(--team-b); }
+.team-players { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.player { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.player .avatar { width: 100%; height: auto; aspect-ratio: 1; border-radius: 10px; font-family: var(--display); font-size: 2.4rem; }
+.player-name { font-family: var(--display); font-size: 1.3rem; font-weight: 700; line-height: 1.1; }
+.stats { display: grid; gap: 1px; font-size: 0.9rem; color: var(--ink-2); }
+.stats b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.vs { display: grid; place-items: center; font-family: var(--display); font-size: 1.3rem; font-weight: 700; color: var(--ink-2); }
+
+/* ---------- Hole picker + card ---------- */
+.pills { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; }
+@media (min-width: 720px) { .pills { grid-template-columns: repeat(18, 1fr); } }
+.pill {
+  aspect-ratio: 1;
+  min-height: 32px;
+  max-width: 100%;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--card);
+  font-family: var(--num);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.pill.done { background: var(--card-2); }
+.pill.won-a { background: var(--team-a); border-color: var(--team-a); color: #fff; }
+.pill.won-b { background: var(--team-b); border-color: var(--team-b); color: #fff; }
+.pill.current { outline: 3px solid var(--fairway); outline-offset: 1px; }
+
+.hole { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.hole-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--rule);
+}
+.hole-title { text-align: center; }
+.hole-num { font-family: var(--display); font-size: 1.6rem; font-weight: 700; line-height: 1.1; }
+.hole-meta { font-size: 0.9rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.nav-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--card);
+  font-size: 1.6rem;
+  line-height: 1;
+  padding: 0 0 3px;
+  cursor: pointer;
+}
+.nav-btn:disabled { opacity: 0.35; cursor: default; }
+
+.prow {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-left: 4px solid var(--team-a);
+}
+.prow.b { border-left-color: var(--team-b); }
+.prow + .prow { border-top: 1px solid var(--rule); }
+.prow.team-break { border-top-width: 2px; }
+.prow-info { min-width: 0; }
+.prow-name { font-weight: 600; }
+.prow-sub { font-size: 0.85rem; color: var(--ink-2); }
+.dots { color: var(--fairway); letter-spacing: 1px; margin-left: 4px; }
+
+.stepper { display: flex; align-items: center; gap: 6px; }
+.stepper button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--card-2);
+  font-size: 1.3rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+.stepper input {
+  width: 52px;
+  height: 46px;
+  text-align: center;
+  font-family: var(--num);
+  font-size: 1.6rem;
+  font-weight: 700;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper);
+}
+.stepper input.under { color: var(--danger); }
+.readonly .stepper button { visibility: hidden; }
+.readonly .stepper input { border-color: transparent; background: transparent; }
+.stepper input:disabled { opacity: 1; }
+
+.hole-result {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  background: var(--card-2);
+  border-top: 1px solid var(--rule);
+  font-size: 0.95rem;
+}
+.hr-line { display: flex; justify-content: space-between; gap: 12px; }
+.hr-line > span:first-child { color: var(--ink-2); }
+.hr-line > span:last-child { text-align: right; font-weight: 600; }
+.hr-total { margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--rule); font-weight: 700; }
+.hr-total > span:first-child { color: var(--ink); }
+.hr-pending { color: var(--ink-2); text-align: center; }
+.tag-a { color: var(--team-a); }
+.tag-b { color: var(--team-b); }
+
+/* ---------- Full scorecard ---------- */
+.tables { display: grid; gap: 14px; }
+.table-wrap { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow-x: auto; }
+table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+.sc th, .sc td { padding: 6px 1px; text-align: center; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+.sc th:first-child, .sc td:first-child {
+  text-align: left;
+  padding-left: 8px;
+  padding-right: 4px;
+  position: sticky;
+  left: 0;
+  background: var(--card);
+  font-family: var(--body);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.sc thead th, .sc thead th:first-child { background: var(--fairway); color: #fff; font-weight: 600; }
+.sc .meta td { color: var(--ink-2); font-size: 0.8rem; }
+.sc .tot { font-weight: 700; background: var(--card-2); }
+.sc tr:last-child td { border-bottom: 0; }
+.sc .pts-a td { color: var(--team-a); font-weight: 700; }
+.sc .pts-b td { color: var(--team-b); font-weight: 700; }
+.sc .pts-a td:first-child, .sc .pts-b td:first-child { color: inherit; }
+.sc .row-a td:first-child { box-shadow: inset 4px 0 var(--team-a); }
+.sc .row-b td:first-child { box-shadow: inset 4px 0 var(--team-b); }
+.mark { display: inline-grid; place-items: center; min-width: 21px; height: 21px; line-height: 1; position: relative; }
+.mark.birdie { border: 1.5px solid currentColor; border-radius: 50%; }
+.mark.eagle { border: 1.5px solid currentColor; border-radius: 50%; box-shadow: 0 0 0 2px var(--card), 0 0 0 3.5px currentColor; }
+.mark.bogey { border: 1.5px solid currentColor; }
+.mark.double { border: 1.5px solid currentColor; box-shadow: 0 0 0 2px var(--card), 0 0 0 3.5px currentColor; }
+.mark sup { position: absolute; top: -7px; right: -6px; font-size: 0.6rem; line-height: 1; color: var(--fairway); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Rules / course ---------- */
+.rules { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (min-width: 720px) { .rules { grid-template-columns: repeat(4, 1fr); } }
+.rule { background: var(--card); border-radius: var(--radius); padding: 16px; display: grid; gap: 6px; align-content: start; border: 1px solid var(--rule); }
+.rule-pts { font-family: var(--num); font-size: 2rem; font-weight: 700; color: var(--fairway); line-height: 1; }
+.rule p:last-child { font-size: 0.92rem; color: var(--ink-2); }
+.rule-notes { margin: 0; padding-left: 20px; color: var(--ink-2); display: grid; gap: 6px; }
+.rule-notes b { color: var(--ink); }
+.facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media (min-width: 720px) { .facts { grid-template-columns: repeat(4, 1fr); } }
+.fact { border-top: 3px solid var(--fairway); padding-top: 8px; }
+.fact p:first-child { font-family: var(--num); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
+.fact p:last-child { font-family: var(--num); font-size: 2rem; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+
+/* ---------- Settings ---------- */
+.settings { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding-inline: 16px; }
+.settings summary { cursor: pointer; font-family: var(--display); font-size: 1.3rem; font-weight: 700; padding-block: 12px; }
+.settings fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.settings-grid { display: grid; gap: 14px; padding-block: 8px 16px; }
+@media (min-width: 600px) { .settings-grid { grid-template-columns: 1fr 1fr; } }
+.settings label { display: grid; gap: 6px; font-size: 0.9rem; font-weight: 600; color: var(--ink-2); }
+.settings input, .settings select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.overrides { grid-column: 1 / -1; border: 1px solid var(--rule) !important; border-radius: 12px; padding: 12px !important; }
+.overrides legend { font-size: 0.9rem; font-weight: 600; color: var(--ink-2); padding: 0 6px; }
+.overrides legend span { font-weight: 400; }
+.override-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media (min-width: 600px) { .override-grid { grid-template-columns: repeat(4, 1fr); } }
+.danger-zone { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding-block: 0 16px; }
+.btn { border-radius: 999px; padding: 10px 18px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.btn-danger-outline { background: transparent; color: var(--danger); border-color: currentColor; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-plain { background: transparent; border-color: var(--rule); }
+
+.foot { text-align: center; color: var(--ink-2); font-size: 0.85rem; padding-inline: 16px; padding-block: 44px 28px; }
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  transform: translate(-50%, 16px);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 380px) {
+  .board { padding: 16px 6px; gap: 6px; }
+  .plate { min-width: 70px; padding-inline: 8px; }
+  .faces .avatar { width: 42px; height: 42px; }
+  .prow { gap: 8px; padding: 10px; }
+  .stepper button { width: 36px; height: 36px; }
+  .stepper input { width: 46px; }
+}
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+
+/* ---------- GitHub Pages additions: scorer sign-in, share, safe areas ---------- */
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+.hero { padding-top: calc(36px + env(safe-area-inset-top, 0px)); }
+.foot { padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
+.status[data-state="offline"]::before { background: var(--warn); }
+.head-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.btn-primary { background: var(--fairway); color: #fff; }
+.btn-small { padding: 6px 14px; font-size: 0.9rem; }
+.scorer {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+}
+.link-btn {
+  justify-self: start;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-weight: 600;
+  color: var(--team-b);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.scorer-form { display: grid; gap: 8px; }
+.scorer-form label { font-size: 0.9rem; font-weight: 600; color: var(--ink-2); }
+.scorer-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.scorer-row input {
+  flex: 1 1 160px;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  font-size: 1rem;
+}
+.scorer-error { color: var(--danger); font-size: 0.9rem; }
+.scorer-on { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.scorer-on p { font-weight: 600; }
+</style>
 </head>
 <body>
-  <header class="hero">
-    <div class="hero-inner">
+<header class="hero">
+  <div class="hero-inner">
+    <div class="masthead">
       <p class="eyebrow">Geneva National · Lake Geneva, WI</p>
       <h1>Battle at the Lake</h1>
       <p class="hero-sub"><span>One day · 18 holes · 2 v 2 best ball</span> <span>Player Course · Gold tees</span></p>
-
-      <section class="board" aria-label="Live score">
-        <div class="board-team team-a">
-          <div class="board-faces" data-faces="a"></div>
-          <p class="board-name" data-team-name="a"></p>
-          <p class="board-points" data-points="a">0</p>
-        </div>
-        <div class="board-mid">
-          <p class="board-status" id="board-status">All square</p>
-          <p class="board-thru" id="board-thru">Not started</p>
-        </div>
-        <div class="board-team team-b">
-          <div class="board-faces" data-faces="b"></div>
-          <p class="board-name" data-team-name="b"></p>
-          <p class="board-points" data-points="b">0</p>
-        </div>
-      </section>
-      <div class="board-breakdown" id="board-breakdown" aria-label="Points by category"></div>
     </div>
-  </header>
-
-  <main>
-    <section class="section" id="teams">
-      <h2>The teams</h2>
-      <div class="teams" id="team-cards"></div>
-      <p class="fine" id="hcp-note"></p>
-    </section>
-
-    <section class="section" id="score">
-      <div class="section-head">
-        <h2>Scorecard</h2>
-        <button class="btn btn-primary" id="share-btn" type="button">Share scores</button>
+    <section class="board" aria-label="Live score">
+      <div class="board-team team-a">
+        <div class="faces" data-faces="a"></div>
+        <p class="board-name" data-team-name="a"></p>
+        <p class="plate" data-points="a">0</p>
       </div>
-      <nav class="pills" id="hole-pills" aria-label="Choose a hole"></nav>
+      <div class="board-mid">
+        <p class="board-status" id="board-status">All square</p>
+        <p class="board-thru" id="board-thru">Not started</p>
+      </div>
+      <div class="board-team team-b">
+        <div class="faces" data-faces="b"></div>
+        <p class="board-name" data-team-name="b"></p>
+        <p class="plate" data-points="b">0</p>
+      </div>
+    </section>
+    <div class="breakdown" id="breakdown" aria-label="Points by category"></div>
+  </div>
+</header>
 
-      <article class="hole" id="hole-card" aria-live="polite">
-        <header class="hole-head">
-          <button class="btn-icon" id="prev-hole" type="button" aria-label="Previous hole">&#8249;</button>
-          <div class="hole-title">
-            <p class="hole-num" id="hole-num"></p>
-            <p class="hole-meta" id="hole-meta"></p>
+<main>
+  <section class="section" id="score">
+    <div class="section-head">
+      <h2>Scorecard</h2>
+      <div class="head-actions">
+        <p class="status" id="status" data-state="connecting" role="status" aria-live="polite"><span id="status-text">Connecting…</span></p>
+        <button class="btn btn-primary btn-small" id="share-btn" type="button">Share link</button>
+      </div>
+    </div>
+    <nav class="pills" id="hole-pills" aria-label="Choose a hole"></nav>
+    <article class="hole" id="hole-card">
+      <header class="hole-head">
+        <button class="nav-btn" id="prev-hole" type="button" aria-label="Previous hole">&#8249;</button>
+        <div class="hole-title">
+          <p class="hole-num" id="hole-num"></p>
+          <p class="hole-meta" id="hole-meta"></p>
+        </div>
+        <button class="nav-btn" id="next-hole" type="button" aria-label="Next hole">&#8250;</button>
+      </header>
+      <div id="hole-rows"></div>
+      <div class="hole-result" id="hole-result" aria-live="polite"></div>
+    </article>
+    <p class="fine" id="sync-note">Connecting to the live scoreboard…</p>
+
+    <div class="scorer" id="scorer-box" hidden>
+      <div id="scorer-off">
+        <button class="link-btn" id="scorer-open" type="button">Keeping score? Enter the scorer PIN</button>
+        <form class="scorer-form" id="scorer-form" autocomplete="off" hidden>
+          <label for="scorer-pin">Scorer PIN</label>
+          <div class="scorer-row">
+            <input id="scorer-pin" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+            <button class="btn btn-primary" id="scorer-go" type="submit">Start scoring</button>
           </div>
-          <button class="btn-icon" id="next-hole" type="button" aria-label="Next hole">&#8250;</button>
-        </header>
-        <div class="hole-rows" id="hole-rows"></div>
-        <div class="hole-result" id="hole-result"></div>
-      </article>
-
-      <p class="fine">Scores save on this device. Tap <strong>Share scores</strong> to send the group a link with every score entered so far.</p>
-
-      <div class="card-tables" id="card-tables"></div>
-    </section>
-
-    <section class="section" id="rules">
-      <h2>How points work</h2>
-      <p class="lede">Two-man best ball, hole by hole. Low net wins the two points on each hole, and real (gross) birdies and eagles earn bonus points on top.</p>
-      <div class="rules">
-        <div class="rule">
-          <p class="rule-pts">1 pt</p>
-          <h3>Low man</h3>
-          <p>Each team's best net score on the hole. Lower one wins the point.</p>
-        </div>
-        <div class="rule">
-          <p class="rule-pts">1 pt</p>
-          <h3>Team total</h3>
-          <p>Both partners' net scores added together. Lower total wins the point.</p>
-        </div>
-        <div class="rule">
-          <p class="rule-pts">1 pt</p>
-          <h3>Birdie</h3>
-          <p>Every gross birdie by any player earns a point for that player's team. Strokes don't count.</p>
-        </div>
-        <div class="rule">
-          <p class="rule-pts">2 pts</p>
-          <h3>Eagle</h3>
-          <p>Every gross eagle or better earns two points for that player's team. Strokes don't count.</p>
-        </div>
-      </div>
-      <ul class="rule-notes" id="rule-notes"></ul>
-    </section>
-
-    <section class="section" id="course">
-      <h2>The course</h2>
-      <div class="course-facts" id="course-facts"></div>
-      <p class="fine">Gold tee yardages, stroke index, rating and slope come from the published Player Course card. Check them against the card in the cart and fix any differences under Match settings.</p>
-    </section>
-
-    <section class="section" id="settings">
-      <details class="settings">
-        <summary>Match settings</summary>
-        <form id="settings-form" class="settings-grid" autocomplete="off">
-          <label>Course rating
-            <input type="number" step="0.1" name="rating" inputmode="decimal">
-          </label>
-          <label>Slope
-            <input type="number" step="1" name="slope" inputmode="numeric">
-          </label>
-          <label>Handicap allowance (%)
-            <input type="number" step="5" min="0" max="100" name="allowance" inputmode="numeric">
-          </label>
-          <label>Strokes
-            <select name="mode">
-              <option value="low">Off the low man</option>
-              <option value="full">Full course handicaps</option>
-            </select>
-          </label>
-          <label>Birdies &amp; eagles count
-            <select name="birdies">
-              <option value="gross">Gross only (no strokes)</option>
-              <option value="net">Net</option>
-            </select>
-          </label>
-          <label>Tied hole
-            <select name="ties">
-              <option value="push">No point awarded</option>
-              <option value="split">Split ½ – ½</option>
-            </select>
-          </label>
-          <fieldset class="overrides">
-            <legend>Course handicap override <span>(leave blank to calculate from index)</span></legend>
-            <div class="override-grid" id="override-grid"></div>
-          </fieldset>
+          <p class="scorer-error" id="scorer-error" role="alert" hidden></p>
         </form>
-        <div class="settings-actions">
-          <button class="btn btn-danger" id="reset-btn" type="button">Clear all scores</button>
+      </div>
+      <div class="scorer-on" id="scorer-on" hidden>
+        <p>You're keeping score on this phone.</p>
+        <button class="link-btn" id="scorer-stop" type="button">Stop scoring on this phone</button>
+      </div>
+    </div>
+
+    <div class="tables" id="card-tables"></div>
+  </section>
+
+  <section class="section" id="teams">
+    <h2>The teams</h2>
+    <div class="teams" id="team-cards"></div>
+    <p class="fine" id="hcp-note"></p>
+  </section>
+
+  <section class="section" id="rules">
+    <h2>How points work</h2>
+    <p class="lede">Two-man best ball, hole by hole. Low net wins the two points on each hole, and real (gross) birdies and eagles earn bonus points on top.</p>
+    <div class="rules">
+      <div class="rule"><p class="rule-pts">1 pt</p><h3>Low man</h3><p>Each team's best net score on the hole. The lower one wins the point.</p></div>
+      <div class="rule"><p class="rule-pts">1 pt</p><h3>Team total</h3><p>Both partners' net scores added together. The lower total wins the point.</p></div>
+      <div class="rule"><p class="rule-pts">1 pt</p><h3>Birdie</h3><p>Every gross birdie by any player earns a point for that player's team. Strokes don't count.</p></div>
+      <div class="rule"><p class="rule-pts">2 pts</p><h3>Eagle</h3><p>Every gross eagle or better earns two points for that player's team. Strokes don't count.</p></div>
+    </div>
+    <ul class="rule-notes" id="rule-notes"></ul>
+  </section>
+
+  <section class="section" id="course">
+    <h2>The course</h2>
+    <div class="facts" id="course-facts"></div>
+    <p class="fine">Gold tee yardages, stroke index, rating and slope come from the published Player Course card. Check them against the card in the cart and fix any differences under Match settings.</p>
+  </section>
+
+  <section class="section" id="settings">
+    <details class="settings">
+      <summary>Match settings</summary>
+      <form id="settings-form" autocomplete="off">
+        <fieldset id="settings-fields">
+          <div class="settings-grid">
+            <label for="set-rating">Course rating<input id="set-rating" type="number" step="0.1" name="rating" inputmode="decimal"></label>
+            <label for="set-slope">Slope<input id="set-slope" type="number" step="1" name="slope" inputmode="numeric"></label>
+            <label for="set-allowance">Handicap allowance (%)<input id="set-allowance" type="number" step="5" min="0" max="100" name="allowance" inputmode="numeric"></label>
+            <label for="set-mode">Strokes
+              <select id="set-mode" name="mode">
+                <option value="low">Off the low man</option>
+                <option value="full">Full course handicaps</option>
+              </select>
+            </label>
+            <label for="set-birdies">Birdies &amp; eagles count
+              <select id="set-birdies" name="birdies">
+                <option value="gross">Gross only (no strokes)</option>
+                <option value="net">Net</option>
+              </select>
+            </label>
+            <label for="set-ties">Tied hole
+              <select id="set-ties" name="ties">
+                <option value="push">No point awarded</option>
+                <option value="split">Split ½ – ½</option>
+              </select>
+            </label>
+            <fieldset class="overrides">
+              <legend>Course handicap override <span>(blank = calculated from index)</span></legend>
+              <div class="override-grid" id="override-grid"></div>
+            </fieldset>
+          </div>
+        </fieldset>
+      </form>
+      <div class="danger-zone" id="danger-zone">
+        <button class="btn btn-danger-outline" id="clear-ask" type="button">Clear all scores</button>
+        <span id="clear-confirm" hidden>
+          <span>Clear every score for all four players?</span>
+          <button class="btn btn-danger" id="clear-yes" type="button">Clear scores</button>
+          <button class="btn btn-plain" id="clear-no" type="button">Cancel</button>
+        </span>
+      </div>
+    </details>
+  </section>
+</main>
+
+<footer class="foot">Battle at the Lake · Geneva National Player Course · Gold tees</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="firebase-config.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  // ---------- Match setup ----------
+  // Photos live in images/<id>.jpg.
+  const PLAYERS = [
+    { id: "g", name: "G", index: 3.8, team: "a", pos: "50% 26%" },
+    { id: "taytay", name: "Tay Tay", index: 21.2, team: "a", pos: "62% 40%" },
+    { id: "luke", name: "Luke", index: 0.1, team: "b", pos: "50% 40%" },
+    { id: "bob", name: "Bob", index: 10.2, team: "b", pos: "50% 28%" },
+  ];
+  const TEAMS = {
+    a: { name: "G & Tay Tay", players: ["g", "taytay"] },
+    b: { name: "Luke & Bob", players: ["luke", "bob"] },
+  };
+  // Geneva National, Player Course, Gold tees
+  const COURSE = {
+    par: [4, 5, 4, 3, 4, 3, 4, 5, 4, 5, 4, 4, 3, 5, 3, 5, 3, 4],
+    si: [15, 1, 7, 17, 13, 11, 9, 3, 5, 2, 8, 4, 10, 18, 12, 14, 16, 6],
+    yards: [360, 536, 387, 132, 322, 175, 402, 517, 451, 504, 356, 431, 146, 469, 159, 536, 186, 340],
+  };
+  const PAR_TOTAL = COURSE.par.reduce((a, b) => a + b, 0);
+  const YARDS_TOTAL = COURSE.yards.reduce((a, b) => a + b, 0);
+  const DEFAULTS = {
+    rating: 71.3, slope: 133, allowance: 100,
+    mode: "low", birdies: "gross", ties: "push",
+    override: { g: null, taytay: null, luke: null, bob: null },
+  };
+  const FIREBASE_SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
+  const LOCAL_KEY = "batl-local-v1";
+  const HOLE_KEY = "batl-hole";
+  const PIN_KEY = "batl-scorer-pin";
+  const MAX_SCORE = 15;
+
+  const byId = Object.fromEntries(PLAYERS.map((p) => [p.id, p]));
+  const $ = (s, r = document) => r.querySelector(s);
+  const isObj = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+  const hk = (h) => "h" + (h + 1);
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch { /* storage blocked */ } },
+    del(k) { try { localStorage.removeItem(k); } catch { /* storage blocked */ } },
+  };
+
+  // The live data: match/scores/<player>/h<hole> and match/settings/...
+  const blankDoc = () => ({ scores: {}, settings: { ...DEFAULTS, override: { ...DEFAULTS.override } } });
+
+  function setPath(obj, parts, v) {
+    const out = isObj(obj) ? { ...obj } : {};
+    const [k, ...rest] = parts;
+    if (rest.length) out[k] = setPath(out[k], rest, v);
+    else if (v == null) delete out[k];
+    else out[k] = v;
+    return out;
+  }
+
+  function sanitizeSettings(raw) {
+    const s = { ...DEFAULTS, override: { ...DEFAULTS.override } };
+    if (!isObj(raw)) return s;
+    const num = (v, lo, hi) => (typeof v === "number" && isFinite(v) && v >= lo && v <= hi ? v : null);
+    s.rating = num(raw.rating, 50, 85) ?? s.rating;
+    s.slope = num(raw.slope, 55, 155) ?? s.slope;
+    s.allowance = num(raw.allowance, 0, 100) ?? s.allowance;
+    if (raw.mode === "low" || raw.mode === "full") s.mode = raw.mode;
+    if (raw.birdies === "gross" || raw.birdies === "net") s.birdies = raw.birdies;
+    if (raw.ties === "push" || raw.ties === "split") s.ties = raw.ties;
+    if (isObj(raw.override)) {
+      for (const p of PLAYERS) {
+        const v = raw.override[p.id];
+        s.override[p.id] = Number.isInteger(v) && v >= -10 && v <= 54 ? v : null;
+      }
+    }
+    return s;
+  }
+
+  function docToState(doc) {
+    const scores = {};
+    for (const p of PLAYERS) {
+      const row = isObj(doc?.scores?.[p.id]) ? doc.scores[p.id] : {};
+      scores[p.id] = [...Array(18)].map((_, h) => {
+        const v = row[hk(h)];
+        return Number.isInteger(v) && v >= 1 && v <= MAX_SCORE ? v : null;
+      });
+    }
+    return { scores, settings: sanitizeSettings(doc?.settings) };
+  }
+
+  // ---------- Live sync ----------
+  let mode = "connecting"; // connecting | viewer | scorer | local | error
+  let online = false;
+  let everOnline = false;
+  let saving = 0;
+  let remote = null;
+  let state = docToState(null);
+  let hole = 0;
+  let lastSettingsSig = "";
+  let errorNote = "";
+  const fb = {};
+
+  const canEdit = () => mode === "scorer" || mode === "local";
+  const isDenied = (err) => /permission/i.test(String(err?.code || "") + " " + String(err?.message || ""));
+
+  function recompute() { state = docToState(remote); }
+
+  // `paths` are relative to match/, e.g. { "scores/g/h3": 5 }. null clears a value.
+  function edit(paths) {
+    if (!canEdit()) return;
+    if (mode === "local") {
+      let doc = remote || blankDoc();
+      for (const [path, v] of Object.entries(paths)) doc = setPath(doc, path.split("/"), v);
+      remote = doc;
+      store.set(LOCAL_KEY, JSON.stringify(remote));
+      recompute();
+      refresh();
+      return;
+    }
+    // Firebase shows the change right away and syncs it, queueing it if the phone is offline.
+    saving++;
+    setStatus();
+    fb.dbm.update(fb.dbm.ref(fb.db, "match"), paths)
+      .catch((err) => {
+        if (isDenied(err)) loseScorer("Scoring was switched off on this phone, so that change wasn't saved. Enter the PIN again to keep scoring.");
+        else toast("Couldn't save that change. Try again.");
+      })
+      .finally(() => { saving--; setStatus(); });
+  }
+
+  async function connect() {
+    const cfg = window.BATL_FIREBASE;
+    if (!cfg || !cfg.databaseURL) return goLocal();
+    try {
+      const [appm, dbm, authm] = await Promise.all(
+        ["firebase-app.js", "firebase-database.js", "firebase-auth.js"].map((f) => import(FIREBASE_SDK + f))
+      );
+      fb.app = appm.initializeApp(cfg);
+      fb.dbm = dbm;
+      fb.authm = authm;
+      fb.db = dbm.getDatabase(fb.app);
+      fb.auth = authm.getAuth(fb.app);
+    } catch {
+      return goError("Couldn't load the live scoreboard. Check your connection and reload the page.");
+    }
+
+    let first = true;
+    fb.dbm.onValue(fb.dbm.ref(fb.db, "match"), (snap) => {
+      remote = snap.val();
+      if (first) {
+        first = false;
+        if (mode === "connecting") mode = "viewer";
+        hole = initialHole();
+        applyMode();
+      }
+      recompute();
+      refresh();
+    }, () => goError("Couldn't load the scores. The scoreboard's database rules may need fixing."));
+
+    fb.dbm.onValue(fb.dbm.ref(fb.db, ".info/connected"), (snap) => {
+      online = snap.val() === true;
+      if (online) everOnline = true;
+      setStatus();
+    });
+
+    const linkPin = takePinFromLink();
+    const pin = linkPin || store.get(PIN_KEY);
+    if (pin) claimScorer(pin, linkPin ? "link" : "saved");
+  }
+
+  // A scorer link looks like …/#pin=XXXX. Read it once, then drop it from the address bar.
+  function takePinFromLink() {
+    const m = /^#pin=(.+)$/.exec(location.hash);
+    if (!m) return null;
+    history.replaceState(null, "", location.pathname + location.search);
+    try { return decodeURIComponent(m[1]); } catch { return null; }
+  }
+
+  async function claimScorer(pin, source) {
+    try {
+      await fb.authm.signInAnonymously(fb.auth);
+      // The database only accepts this write when the PIN is right.
+      await fb.dbm.set(fb.dbm.ref(fb.db, "scorers/" + fb.auth.currentUser.uid), pin);
+    } catch (err) {
+      store.del(PIN_KEY);
+      const msg = isDenied(err)
+        ? "That PIN didn't work. Check it and try again."
+        : String(err?.code || "").startsWith("auth/")
+          ? "Scoring isn't switched on yet. In Firebase, turn on Anonymous sign-in."
+          : "Couldn't check the PIN. Check your connection and try again.";
+      if (source === "form") showScorerError(msg);
+      else toast(msg);
+      return;
+    }
+    store.set(PIN_KEY, pin);
+    mode = "scorer";
+    applyMode();
+    if (source !== "saved") toast("You're keeping score on this phone");
+  }
+
+  function loseScorer(msg) {
+    store.del(PIN_KEY);
+    if (mode === "scorer") mode = "viewer";
+    applyMode();
+    toast(msg);
+  }
+
+  async function stopScoring() {
+    const uid = fb.auth?.currentUser?.uid;
+    store.del(PIN_KEY);
+    mode = "viewer";
+    applyMode();
+    try {
+      if (uid) await fb.dbm.remove(fb.dbm.ref(fb.db, "scorers/" + uid));
+      await fb.authm.signOut(fb.auth);
+    } catch { /* already signed out */ }
+    toast("Stopped scoring on this phone");
+  }
+
+  function goLocal() {
+    mode = "local";
+    try { remote = JSON.parse(store.get(LOCAL_KEY) || "null"); } catch { remote = null; }
+    hole = initialHole();
+    applyMode();
+  }
+
+  function goError(msg) {
+    mode = "error";
+    errorNote = msg;
+    applyMode();
+  }
+
+  function applyMode() {
+    const editable = canEdit();
+    document.body.classList.toggle("readonly", !editable);
+    $("#settings-fields").disabled = !editable;
+    $("#danger-zone").hidden = !editable;
+    $("#scorer-box").hidden = !(mode === "viewer" || mode === "scorer");
+    $("#scorer-off").hidden = mode === "scorer";
+    $("#scorer-on").hidden = mode !== "scorer";
+    const notes = {
+      connecting: "Connecting to the live scoreboard…",
+      viewer: "Scores update live for everyone with this link.",
+      scorer: "Every score you enter shows up on everyone's phone right away. If you lose signal, keep entering scores and they'll sync when you're back.",
+      local: "Live scoring isn't set up yet, so scores save on this phone only.",
+      error: errorNote,
+    };
+    $("#sync-note").textContent = notes[mode];
+    recompute();
+    renderHoleCard();
+    refresh();
+    setStatus();
+  }
+
+  function setStatus() {
+    let st = "live", msg = "Live";
+    if (mode === "connecting") { st = "connecting"; msg = "Connecting…"; }
+    else if (mode === "local") { st = "connecting"; msg = "This phone only"; }
+    else if (mode === "error") { st = "error"; msg = "Not connected"; }
+    else if (!online) {
+      st = everOnline ? "offline" : "connecting";
+      msg = !everOnline ? "Connecting…" : saving ? `Offline · ${saving} to sync` : "Offline · reconnecting";
+    }
+    else if (saving) { st = "offline"; msg = "Saving…"; }
+    else if (mode === "scorer") msg = "Live · you're scoring";
+    $("#status").dataset.state = st;
+    $("#status-text").textContent = msg;
+  }
+
+  function showScorerError(msg) {
+    const el = $("#scorer-error");
+    el.textContent = msg;
+    el.hidden = !msg;
+  }
+
+  // ---------- Handicaps ----------
+  function calcCourseHcp(p, s) {
+    return Math.round(p.index * (s.slope / 113) + (s.rating - PAR_TOTAL));
+  }
+  function courseHandicap(p) {
+    const o = state.settings.override[p.id];
+    return o != null ? o : calcCourseHcp(p, state.settings);
+  }
+  function roundStrokes() {
+    const { allowance, mode: m } = state.settings;
+    const ph = Object.fromEntries(PLAYERS.map((p) => [p.id, Math.round((courseHandicap(p) * allowance) / 100)]));
+    if (m === "low") {
+      const low = Math.min(...Object.values(ph));
+      for (const id in ph) ph[id] -= low;
+    }
+    return ph;
+  }
+  function strokesOnHole(total, si) {
+    if (total >= 0) return Math.floor(total / 18) + (si <= total % 18 ? 1 : 0);
+    const k = -total; // plus handicaps give strokes back starting on stroke index 18
+    return -(Math.floor(k / 18) + (si > 18 - (k % 18) ? 1 : 0));
+  }
+
+  // ---------- Scoring ----------
+  function holeResult(h, strokes) {
+    const par = COURSE.par[h];
+    const players = {};
+    for (const p of PLAYERS) {
+      const gross = state.scores[p.id][h];
+      const given = strokesOnHole(strokes[p.id], COURSE.si[h]);
+      players[p.id] = { gross, given, net: gross == null ? null : gross - given };
+    }
+    const res = { pts: { a: 0, b: 0 }, low: null, total: null, bonus: [], complete: false, players };
+    const tiePts = state.settings.ties === "split" ? 0.5 : 0;
+    const award = (va, vb) => {
+      if (va < vb) { res.pts.a += 1; return "a"; }
+      if (vb < va) { res.pts.b += 1; return "b"; }
+      res.pts.a += tiePts; res.pts.b += tiePts;
+      return "tie";
+    };
+    res.complete = PLAYERS.every((p) => players[p.id].gross != null);
+    if (res.complete) {
+      const nets = (t) => TEAMS[t].players.map((id) => players[id].net);
+      const lowA = Math.min(...nets("a")), lowB = Math.min(...nets("b"));
+      const totA = nets("a").reduce((x, y) => x + y, 0), totB = nets("b").reduce((x, y) => x + y, 0);
+      res.low = { a: lowA, b: lowB, winner: award(lowA, lowB) };
+      res.total = { a: totA, b: totB, winner: award(totA, totB) };
+    }
+    for (const p of PLAYERS) {
+      const pl = players[p.id];
+      if (pl.gross == null) continue;
+      const under = par - (state.settings.birdies === "net" ? pl.net : pl.gross);
+      if (under >= 2) res.bonus.push({ id: p.id, team: p.team, kind: under >= 3 ? "albatross" : "eagle", pts: 2 });
+      else if (under === 1) res.bonus.push({ id: p.id, team: p.team, kind: "birdie", pts: 1 });
+    }
+    for (const b of res.bonus) res.pts[b.team] += b.pts;
+    return res;
+  }
+
+  function matchTotals() {
+    const strokes = roundStrokes();
+    const tiePts = state.settings.ties === "split" ? 0.5 : 0;
+    const t = { pts: { a: 0, b: 0 }, low: { a: 0, b: 0 }, total: { a: 0, b: 0 }, bonus: { a: 0, b: 0 }, holes: [], completed: 0 };
+    for (let h = 0; h < 18; h++) {
+      const r = holeResult(h, strokes);
+      t.holes.push(r);
+      t.pts.a += r.pts.a; t.pts.b += r.pts.b;
+      for (const k of ["low", "total"]) {
+        if (!r[k]) continue;
+        if (r[k].winner === "tie") { t[k].a += tiePts; t[k].b += tiePts; }
+        else t[k][r[k].winner] += 1;
+      }
+      for (const b of r.bonus) t.bonus[b.team] += b.pts;
+      if (r.complete) t.completed++;
+    }
+    return t;
+  }
+
+  function firstOpenHole() {
+    for (let h = 0; h < 18; h++) if (PLAYERS.some((p) => state.scores[p.id][h] == null)) return h;
+    return 17;
+  }
+  function initialHole() {
+    recompute();
+    const h = parseInt(store.get(HOLE_KEY), 10);
+    return h >= 0 && h < 18 ? h : firstOpenHole();
+  }
+
+  // ---------- Formatting ----------
+  const fmtPts = (n) => {
+    const whole = Math.floor(n);
+    const half = n - whole >= 0.5;
+    return half ? (whole ? whole + "½" : "½") : String(whole);
+  };
+  const fmtHcp = (n) => (n < 0 ? "+" + -n : String(n));
+  const initials = (name) => name.split(/\s+/).map((w) => w[0]).join("").toUpperCase();
+  const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+  const teamTag = (t) => `<span class="tag-${t}">${TEAMS[t].name}</span>`;
+
+  function avatar(p) {
+    return `<span class="avatar ${p.team}" aria-hidden="true">${initials(p.name)}` +
+      `<img src="images/${p.id}.jpg" alt="" style="object-position:${p.pos}"></span>`;
+  }
+
+  // ---------- Rendering ----------
+  function renderStatic() {
+    for (const t of ["a", "b"]) {
+      $(`[data-team-name="${t}"]`).textContent = TEAMS[t].name;
+      $(`[data-faces="${t}"]`).innerHTML = TEAMS[t].players.map((id) => avatar(byId[id])).join("");
+    }
+    $("#override-grid").innerHTML = PLAYERS.map((p) =>
+      `<label for="ovr-${p.id}">${p.name}<input id="ovr-${p.id}" type="text" maxlength="3" data-override="${p.id}"></label>`
+    ).join("");
+  }
+
+  function renderBoard(t) {
+    $('[data-points="a"]').textContent = fmtPts(t.pts.a);
+    $('[data-points="b"]').textContent = fmtPts(t.pts.b);
+    const diff = t.pts.a - t.pts.b;
+    const done = t.completed === 18;
+    $("#board-status").textContent = diff === 0
+      ? (done ? "Halved" : "All square")
+      : `${TEAMS[diff > 0 ? "a" : "b"].name} ${done ? "win by" : "up"} ${fmtPts(Math.abs(diff))}`;
+    let thru = "Not started";
+    if (done) thru = "Final";
+    else if (t.completed > 0) {
+      const contiguous = t.holes.slice(0, t.completed).every((r) => r.complete);
+      thru = contiguous ? `Thru ${t.completed}` : `${plural(t.completed, "hole")} in`;
+    }
+    $("#board-thru").textContent = thru;
+    const tile = (label, v) =>
+      `<div class="bd">${label}<strong><span class="a">${fmtPts(v.a)}</span> – <span class="b">${fmtPts(v.b)}</span></strong></div>`;
+    $("#breakdown").innerHTML = tile("Low man", t.low) + tile("Team total", t.total) + tile("Birdies &amp; eagles", t.bonus);
+  }
+
+  function renderTeamCards() {
+    const strokes = roundStrokes();
+    const s = state.settings;
+    const card = (t) => `
+      <div class="team ${t}">
+        <p class="team-label">${TEAMS[t].name}</p>
+        <div class="team-players">
+          ${TEAMS[t].players.map((id) => {
+            const p = byId[id];
+            const st = strokes[id];
+            const [lab, val] = st > 0 ? ["Gets", plural(st, "stroke")] : st < 0 ? ["Gives back", plural(-st, "stroke")] : ["Plays", "scratch"];
+            return `<div class="player">${avatar(p)}
+              <div>
+                <p class="player-name">${p.name}</p>
+                <div class="stats">
+                  <span>Index <b>${p.index.toFixed(1)}</b></span>
+                  <span>Course hcp <b>${fmtHcp(courseHandicap(p))}</b>${s.override[id] != null ? " (set)" : ""}</span>
+                  <span>${lab} <b>${val}</b></span>
+                </div>
+              </div></div>`;
+          }).join("")}
         </div>
-      </details>
-    </section>
-  </main>
+      </div>`;
+    $("#team-cards").innerHTML = card("a") + `<div class="vs">vs</div>` + card("b");
+    const low = PLAYERS.map((p) => ({ p, ch: courseHandicap(p) })).reduce((m, x) => (x.ch < m.ch ? x : m));
+    const allowance = s.allowance === 100 ? "" : ` at ${s.allowance}% allowance`;
+    $("#hcp-note").textContent = s.mode === "low"
+      ? `Course handicaps use the Gold tees (${s.rating.toFixed(1)} / ${s.slope}). Strokes come off the low man${allowance}: ${low.p.name} (${fmtHcp(low.ch)}) plays at scratch and everyone else gets the difference.`
+      : `Course handicaps use the Gold tees (${s.rating.toFixed(1)} / ${s.slope}). Everyone plays off their full course handicap${allowance}.`;
+  }
 
-  <footer class="foot">
-    <p>Battle at the Lake · Geneva National Player Course</p>
-  </footer>
+  function renderPills(t) {
+    $("#hole-pills").innerHTML = t.holes.map((r, h) => {
+      let cls = "pill";
+      if (r.complete) cls += r.pts.a > r.pts.b ? " won-a" : r.pts.b > r.pts.a ? " won-b" : " done";
+      if (h === hole) cls += " current";
+      const label = `Hole ${h + 1}` + (r.complete ? `, ${fmtPts(r.pts.a)} to ${fmtPts(r.pts.b)}` : "");
+      return `<button type="button" class="${cls}" data-hole="${h}" aria-label="${label}"${h === hole ? ' aria-current="true"' : ""}>${h + 1}</button>`;
+    }).join("");
+  }
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  function renderHoleCard() {
+    const h = hole;
+    $("#hole-num").textContent = `Hole ${h + 1}`;
+    $("#hole-meta").textContent = `Par ${COURSE.par[h]} · ${COURSE.yards[h]} yds · Stroke index ${COURSE.si[h]}`;
+    $("#prev-hole").disabled = h === 0;
+    $("#next-hole").disabled = h === 17;
+    const locked = !canEdit();
+    const order = [...TEAMS.a.players, ...TEAMS.b.players];
+    $("#hole-rows").innerHTML = order.map((id, i) => {
+      const p = byId[id];
+      return `<div class="prow ${p.team}${i === 2 ? " team-break" : ""}">
+        ${avatar(p)}
+        <div class="prow-info">
+          <p class="prow-name">${p.name}<span class="dots" data-dots="${id}"></span></p>
+          <p class="prow-sub" data-sub="${id}"></p>
+        </div>
+        <div class="stepper">
+          <button type="button" data-step="-1" data-id="${id}" aria-label="${p.name} minus one"${locked ? " disabled" : ""}>−</button>
+          <input id="score-${id}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" data-id="${id}"
+            placeholder="–" aria-label="${p.name} score on hole ${h + 1}"${locked ? " disabled" : ""}>
+          <button type="button" data-step="1" data-id="${id}" aria-label="${p.name} plus one"${locked ? " disabled" : ""}>+</button>
+        </div>
+      </div>`;
+    }).join("");
+  }
 
-  <script src="assets/app.js"></script>
+  function updateHoleCard(t) {
+    const h = hole;
+    const r = t.holes[h];
+    for (const p of PLAYERS) {
+      const pl = r.players[p.id];
+      $(`[data-dots="${p.id}"]`).textContent = pl.given > 0 ? " " + "•".repeat(pl.given) : "";
+      let sub = pl.given > 0 ? plural(pl.given, "stroke") : pl.given < 0 ? `Gives back ${plural(-pl.given, "stroke")}` : "No strokes";
+      if (pl.gross != null && pl.given !== 0) sub += ` · net ${pl.net}`;
+      $(`[data-sub="${p.id}"]`).textContent = sub;
+      const input = $(`#score-${p.id}`);
+      if (document.activeElement !== input) input.value = pl.gross ?? "";
+      input.classList.toggle("under", pl.gross != null && pl.gross < COURSE.par[h]);
+    }
+    const tieText = state.settings.ties === "split" ? "Split ½ – ½" : "Push";
+    const line = (label, x) => `<div class="hr-line"><span>${label}</span><span>${x.winner === "tie" ? tieText : teamTag(x.winner)} · ${x.a} v ${x.b}</span></div>`;
+    const bonus = r.bonus.length
+      ? r.bonus.map((b) => `<span class="tag-${b.team}">${byId[b.id].name} ${state.settings.birdies === "net" ? "net " : ""}${b.kind} +${b.pts}</span>`).join(", ")
+      : "None";
+    const bonusLine = `<div class="hr-line"><span>Birdies &amp; eagles</span><span>${bonus}</span></div>`;
+    $("#hole-result").innerHTML = r.complete
+      ? line("Low man (net)", r.low) + line("Team total (net)", r.total) + bonusLine +
+        `<div class="hr-line hr-total"><span>Hole ${h + 1}</span><span><span class="tag-a">${fmtPts(r.pts.a)}</span> – <span class="tag-b">${fmtPts(r.pts.b)}</span></span></div>`
+      : `<p class="hr-pending">${canEdit() ? "Enter all four scores to settle low man and team total." : "Waiting for all four scores on this hole."}</p>` +
+        (r.bonus.length ? bonusLine : "");
+  }
+
+  function renderTables(t) {
+    const order = [...TEAMS.a.players, ...TEAMS.b.players];
+    const sum = (arr) => arr.reduce((a, b) => a + (b ?? 0), 0);
+    const any = (arr) => arr.some((v) => v != null);
+    const mark = (gross, par, given) => {
+      if (gross == null) return "";
+      const d = gross - par;
+      const cls = d <= -2 ? "eagle" : d === -1 ? "birdie" : d === 1 ? "bogey" : d >= 2 ? "double" : "";
+      return `<span class="mark ${cls}">${gross}${given > 0 ? `<sup>${"•".repeat(given)}</sup>` : ""}</span>`;
+    };
+    const nine = (start, label, withTotal) => {
+      const idx = [...Array(9)].map((_, i) => start + i);
+      const nineSum = (arr) => sum(idx.map((h) => arr[h]));
+      const head = `<tr><th scope="col">Hole</th>${idx.map((h) => `<th scope="col">${h + 1}</th>`).join("")}<th scope="col">${label}</th>${withTotal ? '<th scope="col">Tot</th>' : ""}</tr>`;
+      const meta = (name, arr, total, grand, cls = "meta") =>
+        `<tr class="${cls}"><td>${name}</td>${idx.map((h) => `<td>${arr[h]}</td>`).join("")}<td class="tot">${total}</td>${withTotal ? `<td class="tot">${grand}</td>` : ""}</tr>`;
+      let rows = meta("Yds", COURSE.yards, nineSum(COURSE.yards), YARDS_TOTAL) +
+        meta("Par", COURSE.par, nineSum(COURSE.par), PAR_TOTAL, "") +
+        meta("SI", COURSE.si, "", "");
+      const ptsRow = (team) => {
+        const vals = idx.map((h) => (t.holes[h].complete || t.holes[h].bonus.length ? fmtPts(t.holes[h].pts[team]) : ""));
+        const tot = idx.reduce((a, h) => a + t.holes[h].pts[team], 0);
+        return `<tr class="pts-${team} row-${team}"><td>Pts</td>${vals.map((v) => `<td>${v}</td>`).join("")}<td class="tot">${fmtPts(tot)}</td>${withTotal ? `<td class="tot">${fmtPts(t.pts[team])}</td>` : ""}</tr>`;
+      };
+      order.forEach((id, i) => {
+        const p = byId[id];
+        const sc = state.scores[id];
+        const ns = idx.map((h) => sc[h]);
+        rows += `<tr class="row-${p.team}"><td>${p.name}</td>${idx.map((h) => `<td>${mark(sc[h], COURSE.par[h], t.holes[h].players[id].given)}</td>`).join("")}` +
+          `<td class="tot">${any(ns) ? sum(ns) : ""}</td>${withTotal ? `<td class="tot">${any(sc) ? sum(sc) : ""}</td>` : ""}</tr>`;
+        if (i === 1) rows += ptsRow("a");
+        if (i === 3) rows += ptsRow("b");
+      });
+      return `<div class="table-wrap"><table class="sc"><caption class="sr-only">${start ? "Back nine" : "Front nine"}</caption><thead>${head}</thead><tbody>${rows}</tbody></table></div>`;
+    };
+    $("#card-tables").innerHTML = nine(0, "Out", false) + nine(9, "In", true);
+  }
+
+  function renderRuleNotes() {
+    const s = state.settings;
+    $("#rule-notes").innerHTML = [
+      s.mode === "low"
+        ? "<b>Net scoring off the low man.</b> The lowest handicap plays at scratch; everyone else gets the difference, given out by stroke index."
+        : "<b>Net scoring off full course handicaps</b>, given out by stroke index.",
+      s.birdies === "gross"
+        ? "<b>Birdies and eagles are gross.</b> Low man and team total use net scores, but the bonus only counts a real birdie or eagle, with no strokes."
+        : "<b>Everything is net, birdies and eagles included.</b> A par on a hole where you get a stroke is a net birdie.",
+      s.ties === "push"
+        ? "<b>Ties push.</b> If low man or team total is tied, nobody gets that point."
+        : "<b>Ties split.</b> A tied low man or team total gives each team ½ point.",
+      "<b>Most points after 18 wins.</b> A hole's low man and team total are settled once all four players have a score.",
+    ].map((n) => `<li>${n}</li>`).join("");
+  }
+
+  function renderCourseFacts() {
+    const s = state.settings;
+    const fact = (k, v) => `<div class="fact"><p>${k}</p><p>${v}</p></div>`;
+    $("#course-facts").innerHTML = fact("Par", PAR_TOTAL) + fact("Yards", YARDS_TOTAL.toLocaleString("en-US")) +
+      fact("Rating", s.rating.toFixed(1)) + fact("Slope", s.slope);
+  }
+
+  function renderSettingsForm() {
+    const f = $("#settings-form");
+    const s = state.settings;
+    for (const k of ["rating", "slope", "allowance", "mode", "birdies", "ties"]) {
+      if (document.activeElement !== f.elements[k]) f.elements[k].value = s[k];
+    }
+    for (const p of PLAYERS) {
+      const input = $(`#ovr-${p.id}`);
+      input.placeholder = fmtHcp(calcCourseHcp(p, s));
+      if (document.activeElement !== input) input.value = s.override[p.id] == null ? "" : fmtHcp(s.override[p.id]);
+    }
+  }
+
+  function refresh() {
+    const t = matchTotals();
+    renderBoard(t);
+    renderPills(t);
+    updateHoleCard(t);
+    renderTables(t);
+    const sig = JSON.stringify(state.settings);
+    if (sig !== lastSettingsSig) {
+      lastSettingsSig = sig;
+      renderTeamCards();
+      renderRuleNotes();
+      renderCourseFacts();
+    }
+    renderSettingsForm();
+  }
+
+  // ---------- Events ----------
+  function goTo(h) {
+    hole = Math.max(0, Math.min(17, h));
+    store.set(HOLE_KEY, String(hole));
+    renderHoleCard();
+    const t = matchTotals();
+    renderPills(t);
+    updateHoleCard(t);
+  }
+  const setScore = (id, v) => edit({ [`scores/${id}/${hk(hole)}`]: v });
+
+  $("#hole-pills").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-hole]");
+    if (b) goTo(+b.dataset.hole);
+  });
+  $("#prev-hole").addEventListener("click", () => goTo(hole - 1));
+  $("#next-hole").addEventListener("click", () => goTo(hole + 1));
+
+  $("#hole-rows").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-step]");
+    if (!b || !canEdit()) return;
+    const id = b.dataset.id;
+    const cur = state.scores[id][hole];
+    setScore(id, cur == null ? COURSE.par[hole] : Math.max(1, Math.min(MAX_SCORE, cur + +b.dataset.step)));
+  });
+  $("#hole-rows").addEventListener("input", (e) => {
+    const input = e.target.closest("input[data-id]");
+    if (!input) return;
+    const digits = input.value.replace(/\D/g, "");
+    if (digits !== input.value) input.value = digits;
+    const n = parseInt(digits, 10);
+    setScore(input.dataset.id, n >= 1 ? Math.min(MAX_SCORE, n) : null);
+  });
+  $("#hole-rows").addEventListener("focusout", (e) => {
+    const input = e.target.closest("input[data-id]");
+    if (input) input.value = state.scores[input.dataset.id][hole] ?? "";
+  });
+
+  $("#settings-form").addEventListener("submit", (e) => e.preventDefault());
+  $("#settings-form").addEventListener("input", (e) => {
+    const el = e.target;
+    if (el.dataset.override) {
+      const m = /^([+-]?)(\d{1,2})$/.exec(el.value.trim());
+      // Golfers write plus handicaps as "+1"; they're stored as negatives.
+      edit({ [`settings/override/${el.dataset.override}`]: m ? (m[1] ? -m[2] : +m[2]) : null });
+    } else if (["rating", "slope", "allowance"].includes(el.name)) {
+      const v = parseFloat(el.value);
+      const clean = sanitizeSettings({ ...state.settings, [el.name]: v });
+      if (clean[el.name] === v) edit({ [`settings/${el.name}`]: v });
+    } else if (el.name) {
+      edit({ [`settings/${el.name}`]: el.value });
+    }
+  });
+
+  $("#clear-ask").addEventListener("click", () => { $("#clear-ask").hidden = true; $("#clear-confirm").hidden = false; });
+  $("#clear-no").addEventListener("click", () => { $("#clear-confirm").hidden = true; $("#clear-ask").hidden = false; });
+  $("#clear-yes").addEventListener("click", async () => {
+    $("#clear-confirm").hidden = true;
+    $("#clear-ask").hidden = false;
+    if (mode === "local") {
+      remote = { ...(remote || blankDoc()), scores: {} };
+      store.set(LOCAL_KEY, JSON.stringify(remote));
+    } else if (mode === "scorer") {
+      try { await fb.dbm.set(fb.dbm.ref(fb.db, "match/scores"), null); }
+      catch (err) {
+        if (isDenied(err)) loseScorer("Scoring was switched off on this phone, so the scores weren't cleared.");
+        else toast("Couldn't clear scores. Check your connection and try again.");
+        return;
+      }
+    } else return;
+    recompute();
+    goTo(0);
+    refresh();
+    toast("Scores cleared");
+  });
+
+  $("#scorer-open").addEventListener("click", () => {
+    $("#scorer-open").hidden = true;
+    $("#scorer-form").hidden = false;
+    $("#scorer-pin").focus();
+  });
+  $("#scorer-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const pin = $("#scorer-pin").value.trim();
+    if (!pin || !fb.auth) return;
+    showScorerError("");
+    $("#scorer-go").disabled = true;
+    await claimScorer(pin, "form");
+    $("#scorer-go").disabled = false;
+    if (mode === "scorer") {
+      $("#scorer-pin").value = "";
+      $("#scorer-form").hidden = true;
+      $("#scorer-open").hidden = false;
+    }
+  });
+  $("#scorer-stop").addEventListener("click", stopScoring);
+
+  $("#share-btn").addEventListener("click", async () => {
+    const url = location.origin + location.pathname;
+    const t = matchTotals();
+    const text = `Battle at the Lake: ${TEAMS.a.name} ${fmtPts(t.pts.a)}, ${TEAMS.b.name} ${fmtPts(t.pts.b)}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: "Battle at the Lake", text, url }); return; }
+      catch (err) { if (err?.name === "AbortError") return; }
+    }
+    try { await navigator.clipboard.writeText(url); toast("Link copied"); }
+    catch { window.prompt("Copy this link:", url); }
+  });
+
+  let toastTimer;
+  function toast(msg) {
+    const el = $("#toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 3000);
+  }
+
+  // A missing photo falls back to the player's initials.
+  document.addEventListener("error", (e) => {
+    if (e.target instanceof HTMLImageElement && e.target.closest(".avatar")) e.target.remove();
+  }, true);
+
+  // ---------- Go ----------
+  renderStatic();
+  renderHoleCard();
+  refresh();
+  setStatus();
+  connect();
+})();
+</script>
 </body>
 </html>
