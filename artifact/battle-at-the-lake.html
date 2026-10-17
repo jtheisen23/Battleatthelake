@@ -604,7 +604,8 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
   // Geneva National, Player Course, Gold tees
   const COURSE = {
     par: [4, 5, 4, 3, 4, 3, 4, 5, 4, 5, 4, 4, 3, 5, 3, 5, 3, 4],
-    si: [15, 1, 7, 17, 13, 11, 9, 3, 5, 2, 8, 4, 10, 18, 12, 14, 16, 6],
+    // Men's handicap row from the course's printed scorecard
+    si: [9, 11, 3, 17, 15, 7, 1, 13, 5, 10, 8, 2, 16, 18, 6, 4, 14, 12],
     yards: [360, 536, 387, 132, 322, 175, 402, 517, 451, 504, 356, 431, 146, 469, 159, 536, 186, 340],
   };
   const PAR_TOTAL = COURSE.par.reduce((a, b) => a + b, 0);
@@ -991,7 +992,7 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
   function renderHoleCard() {
     const h = hole;
     $("#hole-num").textContent = `Hole ${h + 1}`;
-    $("#hole-meta").textContent = `Par ${COURSE.par[h]} · ${COURSE.yards[h]} yds · Stroke index ${COURSE.si[h]}`;
+    $("#hole-meta").textContent = `Par ${COURSE.par[h]} · ${COURSE.yards[h]} yds · Handicap ${COURSE.si[h]}`;
     $("#prev-hole").disabled = h === 0;
     $("#next-hole").disabled = h === 17;
     const locked = !canEdit();
@@ -1058,7 +1059,7 @@ table.sc { width: 100%; border-collapse: collapse; font-family: var(--num); font
         `<tr class="${cls}"><td>${name}</td>${idx.map((h) => `<td>${arr[h]}</td>`).join("")}<td class="tot">${total}</td>${withTotal ? `<td class="tot">${grand}</td>` : ""}</tr>`;
       let rows = meta("Yds", COURSE.yards, nineSum(COURSE.yards), YARDS_TOTAL) +
         meta("Par", COURSE.par, nineSum(COURSE.par), PAR_TOTAL, "") +
-        meta("SI", COURSE.si, "", "");
+        meta("Hcp", COURSE.si, "", "");
       const ptsRow = (team) => {
         const vals = idx.map((h) => (t.holes[h].complete || t.holes[h].bonus.length ? fmtPts(t.holes[h].pts[team]) : ""));
         const tot = idx.reduce((a, h) => a + t.holes[h].pts[team], 0);
